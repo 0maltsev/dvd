@@ -15,6 +15,7 @@ public class Account {
         this.balance = balance;
     }
 
+    public long getBalance(){return this.balance;}
     public void deposit(long value) {
         balance += value;
     }
