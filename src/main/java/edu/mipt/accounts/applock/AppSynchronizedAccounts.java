@@ -17,7 +17,6 @@ public class AppSynchronizedAccounts implements Accounts {
 
         int fromHash = System.identityHashCode(fromAccount);
         int toHash = System.identityHashCode(toAccount);
-
         if (fromHash < toHash) {
             synchronized (fromAccount) {
                 synchronized (toAccount) {
@@ -30,6 +29,7 @@ public class AppSynchronizedAccounts implements Accounts {
                     doTransfer(fromAccount, toAccount, amount);
                 }
             }
+
         } else {
             synchronized (tieLock) {
                 synchronized (fromAccount) {
