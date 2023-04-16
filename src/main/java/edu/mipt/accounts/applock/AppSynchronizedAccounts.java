@@ -40,6 +40,7 @@ public class AppSynchronizedAccounts implements Accounts {
             }
         }
     }
+
     private void doTransfer(Account fromAccount, Account toAccount, long value) throws Exception {
         if (fromAccount.getBalance() - value < 0)
             throw new Exception();
