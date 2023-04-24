@@ -1,9 +1,13 @@
-package edu.mipt.accounts;
+package edu.mipt.accounts.dblock;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Data;
 
 @Data
+@Entity
 public class Account {
+    @Id
     private long id;
     private long balance;
 
