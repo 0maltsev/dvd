@@ -5,7 +5,6 @@ import edu.mipt.accounts.applock.InMemoryAccountRepository;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -63,13 +62,7 @@ public class AppSynchronizedAccountsTest {
     private List<CompletableFuture<Void>> createTransferFutures(List<Transfer> transfers, ExecutorService executorService) {
         return transfers.stream()
                 .map(transfer -> runAsync(() ->
-                {
-                    try {
-                        accounts.transfer(transfer.from(), transfer.to(), transfer.amount());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }, executorService))
+                        accounts.transfer(transfer.from(), transfer.to(), transfer.amount()), executorService))
                 .toList();
     }
 }
