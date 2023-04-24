@@ -1,10 +1,19 @@
-package edu.mipt.accounts;
+package edu.mipt.accounts.dblock;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Data;
+import org.springframework.data.annotation.Version;
 
 @Data
+@Entity
 public class Account {
+    @Id
     private long id;
+
+    @Version
+    private long version;
+
     private long balance;
 
     public Account() {
@@ -15,7 +24,6 @@ public class Account {
         this.balance = balance;
     }
 
-    public long getBalance(){return this.balance;}
     public void deposit(long value) {
         balance += value;
     }

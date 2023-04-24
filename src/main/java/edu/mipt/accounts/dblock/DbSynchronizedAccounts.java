@@ -1,42 +1,43 @@
-package edu.mipt.accounts.applock;
+package edu.mipt.accounts.dblock;
 
-import edu.mipt.accounts.Account;
-import edu.mipt.accounts.AccountRepository;
 import edu.mipt.accounts.Accounts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
 @RequiredArgsConstructor
-public class AppSynchronizedAccounts implements Accounts {
+public class DbSynchronizedAccounts implements Accounts {
     private final AccountRepository accountRepository;
     private static final Object tieLock = new Object();
-
     @Override
+    @Transactional
+    @Retryable
     public void transfer(long fromAccountId, long toAccountId, long amount) throws Exception {
         var fromAccount = accountRepository.findById(fromAccountId);
         var toAccount = accountRepository.findById(toAccountId);
 
         int fromHash = System.identityHashCode(fromAccount);
         int toHash = System.identityHashCode(toAccount);
+
         if (fromHash < toHash) {
-            synchronized (fromAccount) {
-                synchronized (toAccount) {
-                    doTransfer(fromAccount, toAccount, amount);
-                }
-            }
+            finishTransfer(fromAccount, toAccount, fromAccount, toAccount, amount);
+
         } else if (fromHash > toHash) {
-            synchronized (toAccount) {
-                synchronized (fromAccount) {
-                    doTransfer(fromAccount, toAccount, amount);
-                }
-            }
+            finishTransfer(toAccount, fromAccount, fromAccount, toAccount, amount);
 
         } else {
             synchronized (tieLock) {
-                synchronized (fromAccount) {
-                    synchronized (toAccount) {
-                        doTransfer(fromAccount, toAccount, amount);
-                    }
-                }
+                finishTransfer(fromAccount, toAccount, fromAccount, toAccount, amount);
+            }
+        }
+    }
+
+    private void finishTransfer(Account firstSynch, Account secondSynch, Account fromAccount, Account toAccount, long amount) throws Exception {
+        synchronized (firstSynch) {
+            synchronized (secondSynch) {
+                doTransfer(fromAccount, toAccount, amount);
             }
         }
     }
