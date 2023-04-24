@@ -1,9 +1,13 @@
-package edu.mipt.accounts;
+package edu.mipt.accounts.dblock;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Data;
 
 @Data
+@Entity
 public class Account {
+    @Id
     private long id;
     private long balance;
 
@@ -15,7 +19,6 @@ public class Account {
         this.balance = balance;
     }
 
-    public long getBalance(){return this.balance;}
     public void deposit(long value) {
         balance += value;
     }
