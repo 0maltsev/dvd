@@ -13,7 +13,6 @@ public class DbSynchronizedAccounts implements Accounts {
     private static final Object tieLock = new Object();
     @Override
     @Transactional
-    @Retryable
     public void transfer(long fromAccountId, long toAccountId, long amount) throws Exception {
         var fromAccount = accountRepository.findById(fromAccountId);
         var toAccount = accountRepository.findById(toAccountId);
