@@ -55,7 +55,13 @@ public class DbSynchronizedAccountsTest {
         ExecutorService executorService = Executors.newFixedThreadPool(availableProcessors);
         List<CompletableFuture<Void>> futures = transfers.stream()
                 .map(transfer -> runAsync(() ->
-                        accounts.transfer(transfer.from(), transfer.to(), transfer.value()), executorService))
+                {
+                    try {
+                        accounts.transfer(transfer.from(), transfer.to(), transfer.value());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }, executorService))
                 .toList();
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
