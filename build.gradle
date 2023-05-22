@@ -15,16 +15,14 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa',
             'org.springframework.retry:spring-retry'
-    implementation 'org.projectlombok:lombok:1.18.22'
+    implementation 'org.projectlombok:lombok:1.18.26'
 
-    runtimeOnly "org.postgresql:postgresql"
+    runtimeOnly "com.h2database:h2"
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test',
-            'io.zonky.test:embedded-database-spring-test:2.2.0',
-            'io.zonky.test:embedded-postgres:2.0.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 }
 
