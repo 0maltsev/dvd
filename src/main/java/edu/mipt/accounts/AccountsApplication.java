@@ -10,7 +10,6 @@ import static org.springframework.boot.SpringApplication.run;
 @EnableRetry
 @SpringBootApplication
 public class AccountsApplication {
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     public static void main(String[] args) {
         run(AccountsApplication.class, args);
     }

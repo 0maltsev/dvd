@@ -6,6 +6,8 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DbSynchronizedAccounts implements Accounts {
@@ -13,6 +15,7 @@ public class DbSynchronizedAccounts implements Accounts {
     private static final Object tieLock = new Object();
     @Override
     @Transactional
+    @Retryable
     public void transfer(long fromAccountId, long toAccountId, long amount) throws Exception {
         var fromAccount = accountRepository.findById(fromAccountId);
         var toAccount = accountRepository.findById(toAccountId);
@@ -27,18 +30,14 @@ public class DbSynchronizedAccounts implements Accounts {
             finishTransfer(toAccount, fromAccount, fromAccount, toAccount, amount);
 
         } else {
-            synchronized (tieLock) {
+
                 finishTransfer(fromAccount, toAccount, fromAccount, toAccount, amount);
-            }
+
         }
     }
 
     private void finishTransfer(Account firstSynch, Account secondSynch, Account fromAccount, Account toAccount, long amount) throws Exception {
-        synchronized (firstSynch) {
-            synchronized (secondSynch) {
-                doTransfer(fromAccount, toAccount, amount);
-            }
-        }
+        doTransfer(fromAccount, toAccount, amount);
     }
 
     private void doTransfer(Account fromAccount, Account toAccount, long value) throws Exception {
