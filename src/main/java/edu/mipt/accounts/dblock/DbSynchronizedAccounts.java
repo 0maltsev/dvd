@@ -2,12 +2,13 @@ package edu.mipt.accounts.dblock;
 
 import edu.mipt.accounts.Accounts;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.HibernateException;
+import org.springframework.dao.CannotAcquireLockException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -15,8 +16,9 @@ public class DbSynchronizedAccounts implements Accounts {
     private final AccountRepository accountRepository;
     private static final Object tieLock = new Object();
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    @Retryable(maxAttempts = 50)
+    @Transactional
+    @Retryable(maxAttempts = 10, retryFor = { CannotAcquireLockException.class,
+            ObjectOptimisticLockingFailureException.class,})
     public void transfer(long fromAccountId, long toAccountId, long amount) throws Exception {
         var fromAccount = accountRepository.findById(fromAccountId);
         var toAccount = accountRepository.findById(toAccountId);
