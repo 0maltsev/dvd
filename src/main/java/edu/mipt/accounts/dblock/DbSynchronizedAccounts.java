@@ -40,11 +40,7 @@ public class DbSynchronizedAccounts implements Accounts {
     }
 
     private void finishTransfer(Account firstSynch, Account secondSynch, Account fromAccount, Account toAccount, long amount) throws Exception {
-        synchronized (firstSynch) {
-            synchronized (secondSynch) {
-                doTransfer(fromAccount, toAccount, amount);
-            }
-        }
+        doTransfer(fromAccount, toAccount, amount);
     }
 
     private void doTransfer(Account fromAccount, Account toAccount, long value) throws Exception {
