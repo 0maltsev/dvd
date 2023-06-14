@@ -26,16 +26,11 @@ public class DbSynchronizedAccounts implements Accounts {
         int fromHash = System.identityHashCode(fromAccount);
         int toHash = System.identityHashCode(toAccount);
 
-        if (fromHash < toHash) {
+        if (fromHash <= toHash) {
             finishTransfer(fromAccount, toAccount, fromAccount, toAccount, amount);
 
-        } else if (fromHash > toHash) {
-            finishTransfer(toAccount, fromAccount, fromAccount, toAccount, amount);
-
         } else {
-            synchronized (tieLock) {
-                finishTransfer(fromAccount, toAccount, fromAccount, toAccount, amount);
-            }
+            finishTransfer(toAccount, fromAccount, fromAccount, toAccount, amount);
         }
     }
 
